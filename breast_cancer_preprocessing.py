@@ -13,10 +13,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Upload Breast_Cancer.csv dataset
-from google.colab import files
-dataset = files.upload()
-
-df = pd.read_csv('Breast_Cancer.csv')
+df = pd.read_csv('cleaned_breast_cancer_data.csv')
 
 """Cleaning dataset"""
 
@@ -71,7 +68,7 @@ df.head()
 
 # Download cleaned dataset
 df.to_csv("cleaned_breast_cancer_data.csv", index=False)
-files.download("cleaned_breast_cancer_data.csv")
+print("cleaned_breast_cancer_data.csv has been saved in the current directory.")
 
 """Data analysis queries below
 
