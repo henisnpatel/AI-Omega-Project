@@ -26,3 +26,27 @@ X_train, X_temp, y_train, y_temp = train_test_split(
 X_val, X_test, y_val, y_test = train_test_split(
     X_temp, y_temp, test_size=0.5, random_state=42, stratify=y_temp
 )
+
+# 3. Standardize the feature values (important for neural network convergence)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_val = scaler.transform(X_val)
+X_test = scaler.transform(X_test)
+
+# Convert the data to PyTorch tensors
+X_train_tensor = torch.FloatTensor(X_train)
+y_train_tensor = torch.LongTensor(y_train)
+X_val_tensor = torch.FloatTensor(X_val)
+y_val_tensor = torch.LongTensor(y_val)
+X_test_tensor = torch.FloatTensor(X_test)
+y_test_tensor = torch.LongTensor(y_test)
+
+# Create DataLoader objects for batching
+batch_size = 32
+train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
+val_dataset = TensorDataset(X_val_tensor, y_val_tensor)
+test_dataset = TensorDataset(X_test_tensor, y_test_tensor)
+
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=batch_size)
+test_loader = DataLoader(test_dataset, batch_size=batch_size)
