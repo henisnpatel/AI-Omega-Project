@@ -8,23 +8,17 @@ from torch.utils.data import DataLoader, TensorDataset
 
 data = pd.read_csv('cleaned_lung_cancer_data.csv')
 
+data['Level'] = data['Level'] - 1
 
-def categorize_level(level):
-    if level == 1:      # low
-        return 0
-    elif level == 2:    # medium
-        return 1
-    else:               # high
-        return 2
-
-
-data['Level'] = data['Level'].apply(categorize_level)
-
-X = data.drop(columns=['index', 'Patient Id', 'Level']).values
+X = data.drop(['index', 'Patient Id', 'Level'], axis=1).values
 y = data['Level'].values
 
-X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)
-X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42, stratify=y_temp)
+X_train, X_temp, y_train, y_temp = train_test_split(
+    X, y, test_size=0.3, random_state=42, stratify=y)
+
+X_val, X_test, y_val, y_test = train_test_split(
+    X_temp, y_temp, test_size=0.5, random_state=42, stratify=y_temp)
+
 
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
@@ -48,9 +42,9 @@ val_loader = DataLoader(val_dataset, batch_size=batch_size)
 test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
 
-class LungCancerNN(nn.Module):
+class FeedForwardNN(nn.Module):
     def __init__(self, input_dim, hidden_dim1=64, hidden_dim2=32, output_dim=3):
-        super(LungCancerNN, self).__init__()
+        super(FeedForwardNN, self).__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim1)
         self.relu1 = nn.ReLU()
         self.fc2 = nn.Linear(hidden_dim1, hidden_dim2)
@@ -67,12 +61,12 @@ class LungCancerNN(nn.Module):
 
 
 input_dim = X_train.shape[1]
-model = LungCancerNN(input_dim=input_dim)
+model = FeedForwardNN(input_dim=input_dim, hidden_dim1=64, hidden_dim2=32, output_dim=3)
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.0005)
+optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
-num_epochs = 10
+num_epochs = 20
 for epoch in range(num_epochs):
     model.train()
     running_loss = 0.0
@@ -98,7 +92,7 @@ for epoch in range(num_epochs):
     val_acc = correct / total
     print(f"Epoch [{epoch + 1}/{num_epochs}], Loss: {epoch_loss:.4f}, Val Accuracy: {val_acc:.4f}")
 
-print("Training complete.")
+print("\nTraining complete.")
 
 model.eval()
 correct_test = 0
