@@ -7,7 +7,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 
 # 1. Load the dataset
-data = pd.read_csv('lung_cancer_data.csv')  # Replace with actual filename
+data = pd.read_csv('cleaned_lung_cancer_data.csv')
 
 # Drop unnecessary columns: 'index' and 'Patient Id' are identifiers, not features
 X = data.drop(['index', 'Patient Id', 'Level'], axis=1).values  # Features
